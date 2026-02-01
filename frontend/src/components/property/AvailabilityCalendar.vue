@@ -143,12 +143,18 @@ const calendarDays = computed(() => {
     days.push({ date: null });
   }
 
+  console.log(`Building calendar with ${availability.value.length} availability records`);
+
   // Add all days of the month
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const date = new Date(currentYear.value, currentMonth.value, day);
     const dateString = date.toISOString().split('T')[0];
     const availabilityData = availability.value.find(a => a.date === dateString);
     const isPast = date < today;
+
+    if (day === 1 || day === 15) {
+      console.log(`Day ${day} (${dateString}):`, availabilityData);
+    }
 
     days.push({
       date: dateString,
