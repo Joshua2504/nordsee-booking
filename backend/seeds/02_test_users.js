@@ -1,8 +1,13 @@
 const bcrypt = require('bcrypt');
 
 exports.seed = async function(knex) {
-  // Clear existing users (will cascade to related tables)
-  await knex('users').del();
+  // Check if users already exist
+  const existingUsers = await knex('users').count('id as count').first();
+  
+  if (existingUsers.count > 0) {
+    console.log('Users already exist, skipping seed');
+    return;
+  }
   
   // Hash password
   const password = await bcrypt.hash('password123', 10);
@@ -40,4 +45,6 @@ exports.seed = async function(knex) {
       verified: true
     }
   ]);
+  
+  console.log('Test users created');
 };

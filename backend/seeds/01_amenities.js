@@ -1,6 +1,11 @@
 exports.seed = async function(knex) {
-  // Clear existing amenities
-  await knex('amenities').del();
+  // Check if amenities already exist
+  const existingAmenities = await knex('amenities').count('id as count').first();
+  
+  if (existingAmenities.count > 0) {
+    console.log('Amenities already exist, skipping seed');
+    return;
+  }
   
   // Insert amenities
   await knex('amenities').insert([
@@ -84,4 +89,6 @@ exports.seed = async function(knex) {
     { name: 'amenity.kayak', icon: '🚣', category: 'features' },
     { name: 'amenity.surfboard', icon: '🏄', category: 'features' }
   ]);
+  
+  console.log('Amenities created');
 };
