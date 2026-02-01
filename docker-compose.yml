@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nordsee-booking-app
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: nordsee_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: nordsee_booking
+      JWT_SECRET: ${JWT_SECRET}
+      UPLOAD_PATH: /data/uploads
+      MAX_FILE_SIZE: 20971520
+      MAX_FILES_PER_PROPERTY: 100
+      NOMINATIM_BASE_URL: https://nominatim.openstreetmap.org
+      NOMINATIM_EMAIL: ${NOMINATIM_EMAIL}
+      BCRYPT_ROUNDS: 10
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      APP_URL: ${APP_URL}
+    volumes:
+      - ./data/uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
+
+  db:
+    image: mariadb:11.2
+    container_name: nordsee-booking-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nordsee_booking
+      MYSQL_USER: nordsee_user
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:
+  uploads:
