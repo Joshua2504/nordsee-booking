@@ -338,35 +338,35 @@ class PropertyController {
 
       if (!req.file) {
         return res.status(400).json({ 
-          message: req.t('no_file_uploaded') 
+          message: 'No file uploaded' 
         });
       }
 
+      // For now, use the same path for all sizes (will add sharp processing later)
+      const relativePath = `/uploads/properties/${req.file.filename}`;
+      
       const imageData = {
         property_id: id,
         file_name: req.file.filename,
-        file_path: req.file.path,
-        thumbnail_path: req.file.thumbnailPath,
-        medium_path: req.file.mediumPath,
+        file_path: relativePath,
+        thumbnail_path: relativePath,
+        medium_path: relativePath,
         file_size: req.file.size,
         mime_type: req.file.mimetype,
-        width: req.file.width,
-        height: req.file.height,
-        display_order: req.body.display_order || 0,
-        is_primary: req.body.is_primary === 'true',
-        alt_text: req.body.alt_text
+        display_order: 0,
+        is_primary: false
       };
 
       const image = await PropertyModel.addImage(imageData);
 
       res.status(201).json({
-        message: req.t('image_uploaded'),
+        message: 'Image uploaded successfully',
         image
       });
     } catch (error) {
       console.error('Error uploading image:', error);
       res.status(500).json({ 
-        message: req.t('server_error'),
+        message: 'Server error',
         error: error.message 
       });
     }

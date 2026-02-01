@@ -41,7 +41,7 @@
         :class="{ 'is-primary': image.is_primary }"
       >
         <img 
-          :src="`/uploads/${image.medium_path || image.file_path}`" 
+          :src="image.medium_path || image.file_path" 
           :alt="image.alt_text || 'Property image'"
         />
         <div class="image-overlay">

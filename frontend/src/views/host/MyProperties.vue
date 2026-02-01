@@ -30,7 +30,7 @@
         <div class="property-image">
           <img
             v-if="property.primary_image"
-            :src="`/uploads/${property.primary_image.thumbnail_path}`"
+            :src="property.primary_image.thumbnail_path"
             :alt="property.title"
             loading="lazy"
           />

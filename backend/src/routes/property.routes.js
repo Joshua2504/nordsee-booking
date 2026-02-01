@@ -1,8 +1,47 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const PropertyController = require('../controllers/property.controller');
 const { authenticate } = require('../middleware/auth');
 const { body } = require('express-validator');
+
+// Configure multer for file uploads
+const uploadDir = '/data/uploads/properties';
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `property-${req.params.id}-${uniqueSuffix}${ext}`);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // Accept images only
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 20 * 1024 * 1024 // 20MB limit
+  }
+});
 
 // Validation middleware
 const propertyValidation = [
@@ -39,7 +78,7 @@ router.get('/:id/availability', PropertyController.getAvailability);
 router.put('/:id/availability', authenticate, PropertyController.updateAvailability);
 
 // Image management (authenticated, host only)
-router.post('/:id/images', authenticate, PropertyController.addImage);
+router.post('/:id/images', authenticate, upload.single('image'), PropertyController.addImage);
 router.delete('/:id/images/:imageId', authenticate, PropertyController.deleteImage);
 router.put('/:id/images/:imageId/primary', authenticate, PropertyController.setPrimaryImage);
 
