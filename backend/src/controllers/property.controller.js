@@ -293,7 +293,7 @@ class PropertyController {
       }
 
       // Handle bulk dates update (from calendar component)
-      if (dates && Array.isArray(dates)) {
+      if (dates && Array.isArray(dates) && dates.length > 0) {
         const updateData = {};
         if (is_available !== undefined) updateData.is_available = is_available;
         if (status !== undefined) updateData.status = status;
@@ -301,15 +301,20 @@ class PropertyController {
 
         // Update each date individually
         for (const date of dates) {
-          await db('availability_calendar')
+          const result = await db('availability_calendar')
             .where('property_id', id)
             .where('date', date)
             .update(updateData);
+          
+          console.log(`Updated ${result} row(s) for date ${date} with`, updateData);
         }
 
-        // Get updated availability for response
-        const startDate = dates[0];
-        const endDate = dates[dates.length - 1];
+        // Sort dates to get proper range
+        const sortedDates = [...dates].sort();
+        const startDate = sortedDates[0];
+        const endDate = sortedDates[sortedDates.length - 1];
+        
+        console.log(`Fetching availability from ${startDate} to ${endDate}`);
         const updatedAvailability = await PropertyModel.getAvailability(id, startDate, endDate);
 
         return res.json({
