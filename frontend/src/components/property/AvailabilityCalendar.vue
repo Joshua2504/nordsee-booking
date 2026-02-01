@@ -53,7 +53,7 @@
             @click="toggleDate(day)"
           >
             <span v-if="day.date" class="day-number">{{ day.dayOfMonth }}</span>
-            <span v-if="day.price" class="day-price">€{{ day.price }}</span>
+            <span v-if="day.price" class="day-price">€{{ parseFloat(day.price).toFixed(0) }}</span>
           </div>
         </div>
       </div>
@@ -222,15 +222,26 @@ const markAsAvailable = async () => {
   if (selectedDates.value.length === 0) return;
 
   try {
-    await propertyService.updateAvailability(props.propertyId, {
+    const response = await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       is_available: true,
       status: 'available'
     });
     
+    // Update local availability data for immediate feedback
+    if (response.availability) {
+      response.availability.forEach(updatedDay => {
+        const index = availability.value.findIndex(a => a.date === updatedDay.date);
+        if (index !== -1) {
+          availability.value[index] = updatedDay;
+        }
+      });
+    }
+    
     toast.success($t('availability.updated'));
     clearSelection();
-    loadAvailability();
+    // Reload full month to ensure all data is fresh
+    await loadAvailability();
   } catch (error) {
     console.error('Error updating availability:', error);
     toast.error('Failed to update availability');
@@ -241,15 +252,27 @@ const markAsBlocked = async () => {
   if (selectedDates.value.length === 0) return;
 
   try {
-    await propertyService.updateAvailability(props.propertyId, {
+    const response = await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       is_available: false,
       status: 'blocked'
     });
     
+    // Update local availability data for immediate feedback
+    if (response.availability) {
+      // Update the availability array with new data
+      response.availability.forEach(updatedDay => {
+        const index = availability.value.findIndex(a => a.date === updatedDay.date);
+        if (index !== -1) {
+          availability.value[index] = updatedDay;
+        }
+      });
+    }
+    
     toast.success($t('availability.updated'));
     clearSelection();
-    loadAvailability();
+    // Reload full month to ensure all data is fresh
+    await loadAvailability();
   } catch (error) {
     console.error('Error updating availability:', error);
     toast.error('Failed to update availability');
@@ -260,15 +283,26 @@ const applyCustomPrice = async () => {
   if (selectedDates.value.length === 0 || !customPrice.value) return;
 
   try {
-    await propertyService.updateAvailability(props.propertyId, {
+    const response = await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       price: parseFloat(customPrice.value)
     });
     
+    // Update local availability data for immediate feedback
+    if (response.availability) {
+      response.availability.forEach(updatedDay => {
+        const index = availability.value.findIndex(a => a.date === updatedDay.date);
+        if (index !== -1) {
+          availability.value[index] = updatedDay;
+        }
+      });
+    }
+    
     toast.success($t('availability.priceUpdated'));
     customPrice.value = null;
     clearSelection();
-    loadAvailability();
+    // Reload full month to ensure all data is fresh
+    await loadAvailability();
   } catch (error) {
     console.error('Error updating price:', error);
     toast.error('Failed to update price');
