@@ -88,7 +88,13 @@
     "publish": "Veröffentlichen",
     "unpublish": "Unveröffentlichen",
     "deleteConfirmTitle": "Unterkunft löschen?",
-    "deleteConfirmMessage": "Möchten Sie \"{title}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    "deleteConfirmMessage": "Möchten Sie \"{title}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "pricingDetails": "Preisdetails",
+    "bookingNotice": "Buchungsanfragen werden in Kürze verfügbar sein.",
+    "bookingComingSoon": "Buchung demnächst verfügbar",
+    "noChargeYet": "Sie werden noch nicht belastet",
+    "notFound": "Unterkunft nicht gefunden",
+    "notFoundDescription": "Die gesuchte Unterkunft existiert nicht oder wurde entfernt."
   },
   "propertyForm": {
     "basicInfo": "Grundinformationen",
