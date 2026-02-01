@@ -111,7 +111,14 @@
     "basePricePlaceholder": "Preis pro Nacht",
     "cleaningFee": "Reinigungsgebühr",
     "cleaningFeePlaceholder": "Einmalige Gebühr",
-    "amenities": "Ausstattung"
+    "amenities": "Ausstattung",
+    "images": "Bilder",
+    "uploadImages": "Bilder hochladen",
+    "uploadHint": "Ziehen Sie Bilder hierher oder klicken Sie zum Auswählen",
+    "setPrimary": "Als Hauptbild festlegen",
+    "primaryImage": "Hauptbild",
+    "addImages": "Bilder hinzufügen",
+    "addImagesDescription": "Fügen Sie Bilder zu Ihrer Unterkunft hinzu, um sie für Gäste attraktiver zu machen"
   },
   "propertyType": {
     "house": "Haus",
@@ -176,6 +183,7 @@
     "submit": "Absenden",
     "error": "Fehler",
     "success": "Erfolg",
-    "confirm": "Bestätigen"
+    "confirm": "Bestätigen",
+    "done": "Fertig"
   }
 }

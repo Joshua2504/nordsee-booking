@@ -9,17 +9,36 @@
       @submit="handleSubmit"
       @cancel="handleCancel"
     />
+
+    <div v-if="showImageUpload && createdPropertyId" class="image-upload-section">
+      <h2>{{ $t('propertyForm.addImages') }}</h2>
+      <p>{{ $t('propertyForm.addImagesDescription') }}</p>
+      <ImageUploader
+        :property-id="createdPropertyId"
+        :initial-images="[]"
+      />
+      <div class="form-actions">
+        <RouterLink to="/host/properties" class="btn btn-primary">
+          {{ $t('common.done') }}
+        </RouterLink>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import PropertyForm from '@/components/property/PropertyForm.vue';
+import ImageUploader from '@/components/property/ImageUploader.vue';
 import propertyService from '@/services/propertyService';
 
 const router = useRouter();
 const toast = useToast();
+
+const showImageUpload = ref(false);
+const createdPropertyId = ref(null);
 
 const handleSubmit = async (formData) => {
   try {
@@ -27,8 +46,16 @@ const handleSubmit = async (formData) => {
     
     toast.success('Property created successfully!');
     
-    // Redirect to host dashboard
-    router.push({ name: 'HostDashboard' });
+    // Show image upload section instead of redirecting
+    createdPropertyId.value = response.property.id;
+    showImageUpload.value = true;
+    
+    // Scroll to image upload section
+    setTimeout(() => {
+      document.querySelector('.image-upload-section')?.scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }, 100);
   } catch (error) {
     console.error('Error creating property:', error);
     toast.error(error.response?.data?.message || 'Failed to create property');
@@ -61,6 +88,50 @@ const handleCancel = () => {
 .page-header p {
   color: #666;
   font-size: 1.1rem;
+}
+
+.image-upload-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-upload-section h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.image-upload-section p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.form-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
 }
 
 @media (max-width: 768px) {
