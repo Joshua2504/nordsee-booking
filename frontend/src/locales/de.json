@@ -68,7 +68,69 @@
     "guests_capacity": "Gäste",
     "bedrooms": "Schlafzimmer",
     "beds": "Betten",
-    "bathrooms": "Badezimmer"
+    "bathrooms": "Badezimmer",
+    "createNew": "Neue Unterkunft erstellen",
+    "createDescription": "Füllen Sie die Details Ihrer Unterkunft aus"
+  },
+  "propertyForm": {
+    "basicInfo": "Grundinformationen",
+    "title": "Titel",
+    "titlePlaceholder": "z.B. Gemütliches Ferienhaus am Strand",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreiben Sie Ihre Unterkunft...",
+    "propertyType": "Unterkunftsart",
+    "selectType": "Bitte wählen",
+    "status": "Status",
+    "location": "Standort",
+    "address": "Adresse",
+    "addressPlaceholder": "Straße und Hausnummer",
+    "city": "Stadt",
+    "cityPlaceholder": "z.B. Sylt, Norderney",
+    "postalCode": "Postleitzahl",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
+    "details": "Details",
+    "guestCapacity": "Gästekapazität",
+    "bedrooms": "Schlafzimmer",
+    "beds": "Betten",
+    "bathrooms": "Badezimmer",
+    "pricing": "Preisgestaltung",
+    "basePrice": "Basispreis",
+    "basePricePlaceholder": "Preis pro Nacht",
+    "cleaningFee": "Reinigungsgebühr",
+    "cleaningFeePlaceholder": "Einmalige Gebühr",
+    "amenities": "Ausstattung"
+  },
+  "propertyType": {
+    "house": "Haus",
+    "apartment": "Wohnung",
+    "cottage": "Ferienhaus",
+    "villa": "Villa",
+    "room": "Zimmer",
+    "other": "Sonstiges"
+  },
+  "propertyStatus": {
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "unpublished": "Unveröffentlicht",
+    "archived": "Archiviert"
+  },
+  "amenityCategory": {
+    "essentials": "Wesentliches",
+    "features": "Ausstattungsmerkmale",
+    "location": "Lage & Umgebung",
+    "safety": "Sicherheit",
+    "accessibility": "Barrierefreiheit"
+  },
+  "amenity": {
+    "wifi": "WLAN",
+    "heating": "Heizung",
+    "air_conditioning": "Klimaanlage",
+    "kitchen": "Küche",
+    "free_parking": "Kostenloser Parkplatz",
+    "pool": "Pool",
+    "beach_access": "Strandzugang",
+    "sea_view": "Meerblick"
   },
   "booking": {
     "title": "Buchung",
@@ -89,6 +151,7 @@
   "common": {
     "loading": "Wird geladen...",
     "save": "Speichern",
+    "saving": "Speichern...",
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "edit": "Bearbeiten",

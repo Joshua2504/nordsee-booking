@@ -66,12 +66,10 @@ app.get('/api', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/properties', require('./routes/property.routes'));
+app.use('/api/bookings', require('./routes/booking.routes'));
+app.use('/api/amenities', require('./routes/amenity.routes'));
 // app.use('/api/users', require('./routes/user.routes'));
-// app.use('/api/properties', require('./routes/property.routes'));
-// app.use('/api/bookings', require('./routes/booking.routes'));
-// app.use('/api/availability', require('./routes/availability.routes'));
-// app.use('/api/search', require('./routes/search.routes'));
-// app.use('/api/amenities', require('./routes/amenity.routes'));
 
 // Serve Vue.js app for all other routes in production (must be before error handler)
 if (process.env.NODE_ENV === 'production') {
