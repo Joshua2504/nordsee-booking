@@ -49,8 +49,10 @@
     "instant_book": "Sofortbuchung",
     "bedrooms": "Schlafzimmer",
     "bathrooms": "Badezimmer",
-    "results": "Ergebnisse",
-    "no_results": "Keine Unterkünfte gefunden"
+    "results": "Suchergebnisse",
+    "propertiesFound": "Unterkünfte gefunden",
+    "no_results": "Keine Unterkünfte gefunden",
+    "noResultsDescription": "Versuchen Sie, Ihre Suchkriterien anzupassen oder erstellen Sie als Vermieter eine neue Unterkunft."
   },
   "property": {
     "title": "Unterkunft",
