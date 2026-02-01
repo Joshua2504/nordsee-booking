@@ -106,31 +106,21 @@
 
         <!-- Booking Sidebar -->
         <div class="booking-sidebar">
-          <div class="booking-card">
+          <BookingForm v-if="isAuthenticated" :property="property" />
+          
+          <div v-else class="booking-card">
             <div class="booking-price">
               <span class="price">€{{ property.base_price }}</span>
               <span class="period">/ {{ $t('property.night') }}</span>
             </div>
 
             <div class="booking-notice">
-              <p>{{ $t('property.bookingNotice') }}</p>
+              <p>{{ $t('booking.loginRequired') }}</p>
             </div>
 
-            <RouterLink 
-              v-if="!isAuthenticated"
-              to="/login" 
-              class="btn btn-primary btn-block"
-            >
+            <RouterLink to="/login" class="btn btn-primary btn-block">
               {{ $t('auth.login_button') }}
             </RouterLink>
-            
-            <button 
-              v-else
-              class="btn btn-primary btn-block" 
-              disabled
-            >
-              {{ $t('property.bookingComingSoon') }}
-            </button>
 
             <p class="booking-info">{{ $t('property.noChargeYet') }}</p>
           </div>
@@ -154,6 +144,7 @@ import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { storeToRefs } from 'pinia';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
+import BookingForm from '@/components/booking/BookingForm.vue';
 import propertyService from '@/services/propertyService';
 import { useAuthStore } from '@/stores/auth';
 

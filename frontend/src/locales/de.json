@@ -164,11 +164,13 @@
     "sea_view": "Meerblick"
   },
   "booking": {
-    "title": "Buchungen",
+    "title": "Buchungsanfragen",
     "check_in": "Anreise",
     "check_out": "Abreise",
     "nights": "Nächte",
+    "night": "Nacht",
     "guests": "Gäste",
+    "guest": "Gast",
     "status": "Status",
     "pending": "Ausstehend",
     "confirmed": "Bestätigt",
@@ -178,8 +180,20 @@
     "cancel_booking": "Buchung stornieren",
     "approve": "Genehmigen",
     "reject": "Ablehnen",
-    "manageBookings": "Buchungen verwalten",
-    "viewBookings": "Buchungen anzeigen"
+    "manageBookings": "Verwalten Sie Ihre Buchungen",
+    "viewBookings": "Buchungen anzeigen",
+    "submitting": "Wird gesendet",
+    "requestSent": "Buchungsanfrage wurde gesendet!",
+    "noChargeNotice": "Sie werden erst nach Bestätigung durch den Vermieter belastet",
+    "loginRequired": "Melden Sie sich an, um diese Unterkunft zu buchen",
+    "accommodation": "Unterkunft",
+    "cleaningFee": "Reinigungsgebühr",
+    "serviceFee": "Servicegebühr",
+    "totalPrice": "Gesamtpreis",
+    "book": "Buchen",
+    "cancelConfirm": "Möchten Sie diese Buchung wirklich stornieren?",
+    "noBookings": "Keine Buchungen",
+    "noBookingsDescription": "Sie haben noch keine Buchungen vorgenommen. Durchsuchen Sie unsere Unterkünfte und buchen Sie Ihren nächsten Aufenthalt!"
   },
   "common": {
     "loading": "Wird geladen...",
