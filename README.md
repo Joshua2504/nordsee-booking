@@ -163,13 +163,22 @@ An Airbnb/Booking.com replica for the German northern coast (Nordsee). Built wit
    ```bash
    docker-compose up -d --build
    ```
+   
+   **Note**: The `--build` flag rebuilds the container but preserves data in volumes (`data/mysql` for database, `data/uploads` for images). Migrations and seeds run automatically on startup. To completely reset the database, run:
+   ```bash
+   docker-compose down -v  # ⚠️ This deletes ALL data including volumes
+   rm -rf data/mysql data/uploads
+   docker-compose up -d --build
+   ```
 
-4. **Run database migrations**
+4. **Run database migrations** (if not using docker-entrypoint.sh auto-run)
    ```bash
    docker-compose exec app npx knex migrate:latest
    ```
+   
+   **Note**: Migrations and seeds run automatically via the docker-entrypoint.sh script. Only run manually if needed.
 
-5. **Seed database**
+5. **Seed database** (if not using docker-entrypoint.sh auto-run)
    ```bash
    docker-compose exec app npx knex seed:run
    ```

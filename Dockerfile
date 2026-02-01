@@ -14,6 +14,9 @@ RUN npm run build
 FROM node:24-alpine
 WORKDIR /app
 
+# Install MariaDB client for database checks
+RUN apk add --no-cache mariadb-client
+
 # Install backend dependencies
 COPY backend/package*.json ./
 RUN npm install --omit=dev

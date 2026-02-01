@@ -59,3 +59,19 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: nordsee-booking-phpmyadmin
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_AUTH_TYPE: config
+    restart: unless-stopped

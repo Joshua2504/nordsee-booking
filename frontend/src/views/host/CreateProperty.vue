@@ -11,15 +11,24 @@
     />
 
     <div v-if="showImageUpload && createdPropertyId" class="image-upload-section">
-      <h2>{{ $t('propertyForm.addImages') }}</h2>
+      <div class="success-message">
+        <span class="success-icon">✅</span>
+        <h2>{{ $t('property.propertyCreated') }}</h2>
+        <p>{{ $t('property.propertyCreatedDescription') }}</p>
+      </div>
+      
+      <h3>{{ $t('propertyForm.addImages') }}</h3>
       <p>{{ $t('propertyForm.addImagesDescription') }}</p>
       <ImageUploader
         :property-id="createdPropertyId"
         :initial-images="[]"
       />
       <div class="form-actions">
-        <RouterLink to="/host/properties" class="btn btn-primary">
-          {{ $t('common.done') }}
+        <RouterLink to="/host/properties" class="btn btn-outline">
+          {{ $t('property.viewMyProperties') }}
+        </RouterLink>
+        <RouterLink to="/host/properties/create" class="btn btn-secondary" @click="resetForm">
+          {{ $t('property.createAnother') }}
         </RouterLink>
       </div>
     </div>
@@ -40,11 +49,16 @@ const toast = useToast();
 const showImageUpload = ref(false);
 const createdPropertyId = ref(null);
 
+const resetForm = () => {
+  showImageUpload.value = false;
+  createdPropertyId.value = null;
+};
+
 const handleSubmit = async (formData) => {
   try {
     const response = await propertyService.createProperty(formData);
     
-    toast.success('Property created successfully!');
+    toast.success('Property created successfully! Add images or click Done to continue.');
     
     // Show image upload section instead of redirecting
     createdPropertyId.value = response.property.id;
@@ -98,8 +112,32 @@ const handleCancel = () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.image-upload-section h2 {
+.success-message {
+  text-align: center;
+  padding: 2rem;
+  background: #d4edda;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.success-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.success-message h2 {
+  color: #155724;
+  margin-bottom: 0.5rem;
+}
+
+.success-message p {
+  color: #155724;
+}
+
+.image-upload-section h3 {
   color: #2c3e50;
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 
@@ -111,6 +149,7 @@ const handleCancel = () => {
 .form-actions {
   margin-top: 2rem;
   display: flex;
+  gap: 1rem;
   justify-content: center;
 }
 
@@ -132,6 +171,26 @@ const handleCancel = () => {
 
 .btn-primary:hover {
   background: #2980b9;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.btn-outline {
+  background: white;
+  color: #3498db;
+  border: 2px solid #3498db;
+}
+
+.btn-outline:hover {
+  background: #3498db;
+  color: white;
 }
 
 @media (max-width: 768px) {
