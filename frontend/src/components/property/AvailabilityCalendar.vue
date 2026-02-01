@@ -203,13 +203,18 @@ const loadAvailability = async () => {
     const startDate = new Date(currentYear.value, currentMonth.value, 1);
     const endDate = new Date(currentYear.value, currentMonth.value + 1, 0);
     
+    console.log(`Loading availability for property ${props.propertyId} from ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
+    
     const response = await propertyService.getAvailability(
       props.propertyId,
       startDate.toISOString().split('T')[0],
       endDate.toISOString().split('T')[0]
     );
     
-    availability.value = response.availability;
+    console.log(`Received ${response.availability?.length || 0} availability records`);
+    console.log('Sample data:', response.availability?.slice(0, 3));
+    
+    availability.value = response.availability || [];
   } catch (error) {
     console.error('Error loading availability:', error);
     toast.error('Failed to load availability');
@@ -222,25 +227,15 @@ const markAsAvailable = async () => {
   if (selectedDates.value.length === 0) return;
 
   try {
-    const response = await propertyService.updateAvailability(props.propertyId, {
+    await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       is_available: true,
       status: 'available'
     });
     
-    // Update local availability data for immediate feedback
-    if (response.availability) {
-      response.availability.forEach(updatedDay => {
-        const index = availability.value.findIndex(a => a.date === updatedDay.date);
-        if (index !== -1) {
-          availability.value[index] = updatedDay;
-        }
-      });
-    }
-    
     toast.success($t('availability.updated'));
     clearSelection();
-    // Reload full month to ensure all data is fresh
+    // Reload full month to get updated data
     await loadAvailability();
   } catch (error) {
     console.error('Error updating availability:', error);
@@ -252,26 +247,15 @@ const markAsBlocked = async () => {
   if (selectedDates.value.length === 0) return;
 
   try {
-    const response = await propertyService.updateAvailability(props.propertyId, {
+    await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       is_available: false,
       status: 'blocked'
     });
     
-    // Update local availability data for immediate feedback
-    if (response.availability) {
-      // Update the availability array with new data
-      response.availability.forEach(updatedDay => {
-        const index = availability.value.findIndex(a => a.date === updatedDay.date);
-        if (index !== -1) {
-          availability.value[index] = updatedDay;
-        }
-      });
-    }
-    
     toast.success($t('availability.updated'));
     clearSelection();
-    // Reload full month to ensure all data is fresh
+    // Reload full month to get updated data
     await loadAvailability();
   } catch (error) {
     console.error('Error updating availability:', error);
@@ -283,25 +267,15 @@ const applyCustomPrice = async () => {
   if (selectedDates.value.length === 0 || !customPrice.value) return;
 
   try {
-    const response = await propertyService.updateAvailability(props.propertyId, {
+    await propertyService.updateAvailability(props.propertyId, {
       dates: selectedDates.value,
       price: parseFloat(customPrice.value)
     });
     
-    // Update local availability data for immediate feedback
-    if (response.availability) {
-      response.availability.forEach(updatedDay => {
-        const index = availability.value.findIndex(a => a.date === updatedDay.date);
-        if (index !== -1) {
-          availability.value[index] = updatedDay;
-        }
-      });
-    }
-    
     toast.success($t('availability.priceUpdated'));
     customPrice.value = null;
     clearSelection();
-    // Reload full month to ensure all data is fresh
+    // Reload full month to get updated data
     await loadAvailability();
   } catch (error) {
     console.error('Error updating price:', error);
