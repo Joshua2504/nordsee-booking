@@ -54,7 +54,7 @@
             {{ property.beds }} {{ $t('property.beds') }}
           </p>
           <p class="property-price">
-            <strong>€{{ parseFloat(property.base_price).toFixed(2) }}</strong> / {{ $t('property.night') }}
+            {{ $t('common.from') }} <strong>€{{ Math.round(property.min_price || property.base_price) }}</strong> / {{ $t('property.night') }}
           </p>
         </div>
 

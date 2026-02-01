@@ -257,9 +257,23 @@ class PropertyController {
         });
       }
 
+      console.log(`Getting availability for property ${id} from ${start_date} to ${end_date}`);
       const availability = await PropertyModel.getAvailability(id, start_date, end_date);
+      console.log(`Retrieved ${availability.length} records`);
+      
+      // Format data for frontend - convert dates to strings and ensure proper types
+      const formattedAvailability = availability.map(record => ({
+        ...record,
+        date: record.date instanceof Date 
+          ? record.date.toISOString().split('T')[0] 
+          : record.date,
+        is_available: Boolean(record.is_available),
+        price: parseFloat(record.price)
+      }));
+      
+      console.log('First 3 formatted records:', formattedAvailability.slice(0, 3));
 
-      res.json({ availability });
+      res.json({ availability: formattedAvailability });
     } catch (error) {
       console.error('Error fetching availability:', error);
       res.status(500).json({ 

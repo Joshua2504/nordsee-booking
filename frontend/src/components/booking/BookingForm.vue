@@ -1,46 +1,22 @@
 <template>
   <div class="booking-form">
-    <div class="form-header">
-      <div class="price-display">
-        <span class="price">€{{ property.base_price }}</span>
-        <span class="period">/ {{ $t('property.night') }}</span>
-      </div>
-    </div>
-
     <form @submit.prevent="handleSubmit">
-      <!-- Date Selection -->
+      <!-- Date Selection with Calendar -->
       <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <label>{{ $t('search.check_in') }}</label>
-            <input
-              v-model="checkIn"
-              type="date"
-              :min="minDate"
-              required
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label>{{ $t('search.check_out') }}</label>
-            <input
-              v-model="checkOut"
-              type="date"
-              :min="checkOutMin"
-              required
-              class="form-control"
-            />
-          </div>
-        </div>
+        <BookingCalendar 
+          :property-id="property.id"
+          v-model="selectedDates"
+          @dates-selected="onDatesSelected"
+        />
+      </div>
 
-        <div class="form-group">
-          <label>{{ $t('search.guests') }}</label>
-          <select v-model.number="guests" required class="form-control">
-            <option v-for="n in property.guest_capacity" :key="n" :value="n">
-              {{ n }} {{ n === 1 ? $t('booking.guest') : $t('search.guests') }}
-            </option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label>{{ $t('search.guests') }}</label>
+        <select v-model.number="guests" required class="form-control">
+          <option v-for="n in property.guest_capacity" :key="n" :value="n">
+            {{ n }} {{ n === 1 ? $t('booking.guest') : $t('search.guests') }}
+          </option>
+        </select>
       </div>
 
       <!-- Price Breakdown -->
@@ -82,6 +58,7 @@
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import BookingCalendar from './BookingCalendar.vue';
 import bookingService from '@/services/bookingService';
 
 const props = defineProps({
@@ -94,10 +71,28 @@ const props = defineProps({
 const router = useRouter();
 const toast = useToast();
 
-const checkIn = ref('');
-const checkOut = ref('');
+const selectedDates = ref({ checkIn: null, checkOut: null });
 const guests = ref(1);
 const submitting = ref(false);
+
+const onDatesSelected = (dates) => {
+  selectedDates.value = dates;
+};
+
+const nights = computed(() => {
+  if (!selectedDates.value.checkIn || !selectedDates.value.checkOut) return 0;
+  const checkInDate = new Date(selectedDates.value.checkIn);
+  const checkOutDate = new Date(selectedDates.value.checkOut);
+  const diffTime = checkOutDate - checkInDate;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+});
+
+const canBook = computed(() => {
+  return selectedDates.value.checkIn && 
+         selectedDates.value.checkOut && 
+         nights.value > 0 && 
+         guests.value > 0;
+});
 
 const today = new Date();
 const minDate = computed(() => {
@@ -111,15 +106,6 @@ const checkOutMin = computed(() => {
   const checkInDate = new Date(checkIn.value);
   checkInDate.setDate(checkInDate.getDate() + 1);
   return checkInDate.toISOString().split('T')[0];
-});
-
-const nights = computed(() => {
-  if (!checkIn.value || !checkOut.value) return 0;
-  const start = new Date(checkIn.value);
-  const end = new Date(checkOut.value);
-  const diffTime = end - start;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays > 0 ? diffDays : 0;
 });
 
 const accommodationTotal = computed(() => {
@@ -139,21 +125,6 @@ const totalPrice = computed(() => {
   return (base + cleaning + service).toFixed(2);
 });
 
-const canBook = computed(() => {
-  return checkIn.value && checkOut.value && nights.value > 0 && guests.value > 0;
-});
-
-// Reset checkout if checkin changes
-watch(checkIn, (newCheckIn) => {
-  if (checkOut.value && newCheckIn) {
-    const checkInDate = new Date(newCheckIn);
-    const checkOutDate = new Date(checkOut.value);
-    if (checkOutDate <= checkInDate) {
-      checkOut.value = '';
-    }
-  }
-});
-
 const handleSubmit = async () => {
   if (!canBook.value) return;
 
@@ -161,7 +132,8 @@ const handleSubmit = async () => {
   try {
     const bookingData = {
       property_id: props.property.id,
-      check_in: checkIn.value,
+      check_in: selectedDates.value.checkIn,
+      check_out: selectedDates.value.checkOut,
       check_out: checkOut.value,
       guests: guests.value,
       total_price: parseFloat(totalPrice.value)

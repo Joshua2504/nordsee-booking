@@ -226,6 +226,7 @@
     "error": "Fehler",
     "success": "Erfolg",
     "confirm": "Bestätigen",
-    "done": "Fertig"
+    "done": "Fertig",
+    "from": "ab"
   }
 }

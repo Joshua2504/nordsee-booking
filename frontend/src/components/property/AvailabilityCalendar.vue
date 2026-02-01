@@ -53,7 +53,7 @@
             @click="toggleDate(day)"
           >
             <span v-if="day.date" class="day-number">{{ day.dayOfMonth }}</span>
-            <span v-if="day.price" class="day-price">€{{ parseFloat(day.price).toFixed(0) }}</span>
+            <span v-if="day.date && day.price" class="day-price">€{{ Math.round(day.price) }}</span>
           </div>
         </div>
       </div>
@@ -120,6 +120,14 @@ const customPrice = ref(null);
 
 const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
+// Helper function to format date as YYYY-MM-DD in local timezone
+const formatDateLocal = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const currentMonthName = computed(() => {
   const date = new Date(currentYear.value, currentMonth.value);
   return date.toLocaleDateString('de-DE', { month: 'long' });
@@ -143,28 +151,70 @@ const calendarDays = computed(() => {
     days.push({ date: null });
   }
 
+  console.log('=== CALENDAR DEBUG ===');
   console.log(`Building calendar with ${availability.value.length} availability records`);
+  console.log('Availability data sample:', availability.value.slice(0, 5));
+  
+  // Log actual date strings from backend
+  if (availability.value.length > 0) {
+    console.log('Date strings from backend:', availability.value.slice(0, 3).map(a => ({
+      date: a.date,
+      dateType: typeof a.date,
+      status: a.status,
+      price: a.price
+    })));
+  }
+  
+  // Check for any blocked dates
+  const blockedDates = availability.value.filter(a => a.status === 'blocked');
+  const bookedDates = availability.value.filter(a => a.status === 'booked');
+  console.log(`Found ${blockedDates.length} blocked dates, ${bookedDates.length} booked dates`);
+  if (blockedDates.length > 0) {
+    console.log('Blocked dates:', blockedDates.slice(0, 3).map(d => ({
+      date: d.date,
+      status: d.status
+    })));
+  }
 
   // Add all days of the month
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const date = new Date(currentYear.value, currentMonth.value, day);
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = formatDateLocal(date);
     const availabilityData = availability.value.find(a => a.date === dateString);
     const isPast = date < today;
 
-    if (day === 1 || day === 15) {
-      console.log(`Day ${day} (${dateString}):`, availabilityData);
+    if (day <= 3) {
+      console.log(`Day ${day}:`);
+      console.log('  Looking for date:', dateString, 'type:', typeof dateString);
+      console.log('  Checking against:', availability.value.slice(0, 3).map(a => `${a.date} (${typeof a.date})`));
+      console.log('  Found:', !!availabilityData);
+      if (availabilityData) {
+        console.log('  Match data:', {
+          status: availabilityData.status,
+          is_available: availabilityData.is_available,
+          price: availabilityData.price
+        });
+      }
     }
 
-    days.push({
+    const dayData = {
       date: dateString,
       dayOfMonth: day,
       status: availabilityData?.status || 'available',
       price: availabilityData?.price || null,
       isAvailable: availabilityData?.is_available !== false,
       isPast
-    });
+    };
+
+    if (day <= 3) {
+      console.log(`Day ${day} final data:`, dayData);
+      console.log(`  Price value: ${dayData.price}, type: ${typeof dayData.price}, truthy: ${!!dayData.price}`);
+    }
+
+    days.push(dayData);
   }
+
+  console.log('=== END CALENDAR DEBUG ===');
 
   return days;
 });
@@ -205,22 +255,33 @@ const nextMonth = () => {
 
 const loadAvailability = async () => {
   loading.value = true;
+  // Clear existing data to force re-render
+  availability.value = [];
+  
   try {
     const startDate = new Date(currentYear.value, currentMonth.value, 1);
     const endDate = new Date(currentYear.value, currentMonth.value + 1, 0);
     
-    console.log(`Loading availability for property ${props.propertyId} from ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
+    const startDateStr = formatDateLocal(startDate);
+    const endDateStr = formatDateLocal(endDate);
+    
+    console.log(`Loading availability for property ${props.propertyId} from ${startDateStr} to ${endDateStr}`);
     
     const response = await propertyService.getAvailability(
       props.propertyId,
-      startDate.toISOString().split('T')[0],
-      endDate.toISOString().split('T')[0]
+      startDateStr,
+      endDateStr
     );
     
     console.log(`Received ${response.availability?.length || 0} availability records`);
-    console.log('Sample data:', response.availability?.slice(0, 3));
+    console.log('First 5 records:', response.availability?.slice(0, 5));
+    console.log('Raw first record:', JSON.stringify(response.availability?.[0], null, 2));
     
+    // Set new data
     availability.value = response.availability || [];
+    
+    console.log('Availability array updated, length:', availability.value.length);
+    console.log('First item after setting:', JSON.stringify(availability.value[0], null, 2));
   } catch (error) {
     console.error('Error loading availability:', error);
     toast.error('Failed to load availability');
@@ -400,7 +461,7 @@ onMounted(() => {
 
 .calendar-day {
   aspect-ratio: 1;
-  border: 1px solid #ddd;
+  border: 2px solid #ddd;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -410,27 +471,29 @@ onMounted(() => {
   transition: all 0.2s;
   position: relative;
   padding: 0.25rem;
+  background: white;
 }
 
 .calendar-day.empty {
   border: none;
   cursor: default;
+  background: transparent;
 }
 
 .calendar-day.available {
-  background: #d4edda;
-  border-color: #c3e6cb;
+  background: #d4edda !important;
+  border-color: #28a745 !important;
 }
 
 .calendar-day.booked {
-  background: #f8d7da;
-  border-color: #f5c6cb;
+  background: #f8d7da !important;
+  border-color: #dc3545 !important;
   cursor: not-allowed;
 }
 
 .calendar-day.blocked {
-  background: #fff3cd;
-  border-color: #ffeaa7;
+  background: #fff3cd !important;
+  border-color: #ffc107 !important;
 }
 
 .calendar-day.past {
@@ -449,15 +512,20 @@ onMounted(() => {
 }
 
 .day-number {
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   color: #2c3e50;
+  margin-bottom: 2px;
 }
 
 .day-price {
-  font-size: 0.75rem;
-  color: #3498db;
-  font-weight: 500;
+  font-size: 0.7rem;
+  color: #000;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1;
 }
 
 .actions-panel {

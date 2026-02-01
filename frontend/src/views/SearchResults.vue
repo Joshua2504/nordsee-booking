@@ -29,7 +29,7 @@
               <div class="property-header">
                 <h3>{{ property.title }}</h3>
                 <div class="property-price">
-                  €{{ property.base_price }}
+                  {{ $t('common.from') }} €{{ Math.round(property.min_price || property.base_price) }}
                   <span class="price-period">/ {{ $t('property.night') }}</span>
                 </div>
               </div>

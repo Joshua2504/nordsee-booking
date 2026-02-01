@@ -37,11 +37,15 @@ class PropertyModel {
       .select('id', 'first_name', 'last_name', 'avatar_url', 'created_at')
       .first();
 
+    // Get minimum price from availability calendar
+    const minPrice = await this.getMinimumPrice(property.id);
+
     return {
       ...property,
       amenities,
       images,
-      host
+      host,
+      min_price: minPrice || property.base_price
     };
   }
 
@@ -60,7 +64,7 @@ class PropertyModel {
       .orderBy('created_at', 'desc')
       .select('*');
 
-    // Get primary images for each property
+    // Get primary images and minimum price for each property
     for (let property of properties) {
       const primaryImage = await db('property_images')
         .where({ property_id: property.id, is_primary: true })
@@ -72,6 +76,10 @@ class PropertyModel {
         .first();
       
       property.primary_image = primaryImage;
+
+      // Get minimum price from availability calendar
+      const minPrice = await this.getMinimumPrice(property.id);
+      property.min_price = minPrice || property.base_price;
     }
 
     return properties;
@@ -273,7 +281,7 @@ class PropertyModel {
       .offset(offset)
       .orderBy('p.base_price', 'asc');
 
-    // Get primary images
+    // Get primary images and minimum price
     for (let property of properties) {
       const primaryImage = await db('property_images')
         .where({ property_id: property.id, is_primary: true })
@@ -286,6 +294,10 @@ class PropertyModel {
         .first();
       
       property.primary_image = primaryImage;
+
+      // Get minimum price from availability calendar
+      const minPrice = await this.getMinimumPrice(property.id);
+      property.min_price = minPrice || property.base_price;
     }
 
     return {
@@ -401,6 +413,22 @@ class PropertyModel {
       .first();
 
     return prices.total || 0;
+  }
+
+  /**
+   * Get minimum price for property from availability calendar
+   */
+  static async getMinimumPrice(propertyId) {
+    const today = new Date().toISOString().split('T')[0];
+    const result = await db('availability_calendar')
+      .where('property_id', propertyId)
+      .where('date', '>=', today)
+      .where('is_available', true)
+      .where('status', 'available')
+      .min('price as min_price')
+      .first();
+
+    return result.min_price || null;
   }
 }
 

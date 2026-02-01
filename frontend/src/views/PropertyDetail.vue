@@ -40,7 +40,7 @@
               <p class="property-location">📍 {{ property.address }}, {{ property.city }} {{ property.postal_code }}</p>
             </div>
             <div class="property-price">
-              <span class="price-amount">€{{ property.base_price }}</span>
+              <span class="price-amount">{{ $t('common.from') }} €{{ Math.round(property.min_price || property.base_price) }}</span>
               <span class="price-period">/ {{ $t('property.night') }}</span>
             </div>
           </div>
@@ -94,7 +94,7 @@
             <div class="pricing-breakdown">
               <div class="pricing-row">
                 <span>{{ $t('property.price_per_night') }}</span>
-                <span>€{{ property.base_price }}</span>
+                <span>{{ $t('common.from') }} €{{ Math.round(property.min_price || property.base_price) }}</span>
               </div>
               <div v-if="property.cleaning_fee" class="pricing-row">
                 <span>{{ $t('property.cleaning_fee') }}</span>
@@ -110,7 +110,7 @@
           
           <div v-else class="booking-card">
             <div class="booking-price">
-              <span class="price">€{{ property.base_price }}</span>
+              <span class="price">{{ $t('common.from') }} €{{ Math.round(property.min_price || property.base_price) }}</span>
               <span class="period">/ {{ $t('property.night') }}</span>
             </div>
 
