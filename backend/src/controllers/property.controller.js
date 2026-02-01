@@ -1,5 +1,6 @@
 const PropertyModel = require('../models/property.model');
 const { validationResult } = require('express-validator');
+const db = require('../config/database');
 
 class PropertyController {
   /**
@@ -275,7 +276,7 @@ class PropertyController {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const { start_date, end_date, updates } = req.body;
+      const { start_date, end_date, updates, dates, is_available, status, price } = req.body;
 
       // Check if property exists and belongs to user
       const property = await PropertyModel.findById(id);
@@ -291,6 +292,33 @@ class PropertyController {
         });
       }
 
+      // Handle bulk dates update (from calendar component)
+      if (dates && Array.isArray(dates)) {
+        const updateData = {};
+        if (is_available !== undefined) updateData.is_available = is_available;
+        if (status !== undefined) updateData.status = status;
+        if (price !== undefined) updateData.price = price;
+
+        // Update each date individually
+        for (const date of dates) {
+          await db('availability_calendar')
+            .where('property_id', id)
+            .where('date', date)
+            .update(updateData);
+        }
+
+        // Get updated availability for response
+        const startDate = dates[0];
+        const endDate = dates[dates.length - 1];
+        const updatedAvailability = await PropertyModel.getAvailability(id, startDate, endDate);
+
+        return res.json({
+          message: req.t('availability_updated'),
+          availability: updatedAvailability
+        });
+      }
+
+      // Handle date range update (legacy format)
       if (!start_date || !end_date || !updates) {
         return res.status(400).json({ 
           message: req.t('missing_required_fields') 

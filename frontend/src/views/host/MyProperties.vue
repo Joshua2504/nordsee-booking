@@ -66,6 +66,12 @@
             {{ $t('common.edit') }}
           </RouterLink>
           <button 
+            class="btn btn-info btn-sm" 
+            @click="openAvailabilityModal(property)"
+          >
+            📅 {{ $t('availability.manage') }}
+          </button>
+          <button 
             class="btn btn-outline btn-sm" 
             @click="toggleStatus(property)"
           >
@@ -77,6 +83,22 @@
           >
             {{ $t('common.delete') }}
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability Modal -->
+    <div v-if="showAvailabilityModal" class="modal-overlay" @click="closeAvailabilityModal">
+      <div class="modal modal-large" @click.stop>
+        <div class="modal-header">
+          <h3>{{ $t('availability.title') }} - {{ selectedProperty?.title }}</h3>
+          <button class="close-btn" @click="closeAvailabilityModal">×</button>
+        </div>
+        <div class="modal-body">
+          <AvailabilityCalendar 
+            v-if="selectedProperty" 
+            :property-id="selectedProperty.id" 
+          />
         </div>
       </div>
     </div>
@@ -103,6 +125,7 @@
 import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
+import AvailabilityCalendar from '@/components/property/AvailabilityCalendar.vue';
 import propertyService from '@/services/propertyService';
 
 const toast = useToast();
@@ -112,6 +135,8 @@ const error = ref(null);
 const properties = ref([]);
 const showDeleteModal = ref(false);
 const propertyToDelete = ref(null);
+const showAvailabilityModal = ref(false);
+const selectedProperty = ref(null);
 
 onMounted(() => {
   loadProperties();
@@ -149,6 +174,16 @@ const toggleStatus = async (property) => {
 const confirmDelete = (property) => {
   propertyToDelete.value = property;
   showDeleteModal.value = true;
+};
+
+const openAvailabilityModal = (property) => {
+  selectedProperty.value = property;
+  showAvailabilityModal.value = true;
+};
+
+const closeAvailabilityModal = () => {
+  showAvailabilityModal.value = false;
+  selectedProperty.value = null;
 };
 
 const deleteProperty = async () => {
@@ -373,6 +408,17 @@ const deleteProperty = async () => {
   color: white;
 }
 
+.btn-info {
+  background: transparent;
+  color: #3498db;
+  border: 1px solid #3498db;
+}
+
+.btn-info:hover {
+  background: #3498db;
+  color: white;
+}
+
 .btn-secondary {
   background: #95a5a6;
   color: white;
@@ -412,6 +458,45 @@ const deleteProperty = async () => {
   border-radius: 12px;
   max-width: 500px;
   width: 90%;
+}
+
+.modal-large {
+  max-width: 900px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .modal h3 {

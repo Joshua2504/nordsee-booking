@@ -358,25 +358,45 @@ class PropertyModel {
    * Check if property is available for booking
    */
   static async checkAvailability(propertyId, checkIn, checkOut) {
-    const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+    // Calculate nights (checkout date is not included in the stay)
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    
+    // Check availability for check-in date up to (but not including) checkout date
+    const dayBeforeCheckout = new Date(checkOutDate);
+    dayBeforeCheckout.setDate(dayBeforeCheckout.getDate() - 1);
     
     const availableDays = await db('availability_calendar')
       .where('property_id', propertyId)
-      .whereBetween('date', [checkIn, checkOut])
+      .where('date', '>=', checkIn)
+      .where('date', '<=', dayBeforeCheckout.toISOString().split('T')[0])
+      .where('is_available', true)
       .where('status', 'available')
       .count('* as count')
       .first();
 
-    return availableDays.count === nights;
+    // If no availability records found, return false
+    if (!availableDays || availableDays.count === 0) {
+      return false;
+    }
+
+    return availableDays.count >= nights;
   }
 
   /**
    * Get price for date range
    */
   static async getPriceForDateRange(propertyId, checkIn, checkOut) {
+    // Calculate price for check-in date up to (but not including) checkout date
+    const checkOutDate = new Date(checkOut);
+    const dayBeforeCheckout = new Date(checkOutDate);
+    dayBeforeCheckout.setDate(dayBeforeCheckout.getDate() - 1);
+    
     const prices = await db('availability_calendar')
       .where('property_id', propertyId)
-      .whereBetween('date', [checkIn, checkOut])
+      .where('date', '>=', checkIn)
+      .where('date', '<=', dayBeforeCheckout.toISOString().split('T')[0])
       .sum('price as total')
       .first();
 

@@ -195,6 +195,22 @@
     "noBookings": "Keine Buchungen",
     "noBookingsDescription": "Sie haben noch keine Buchungen vorgenommen. Durchsuchen Sie unsere Unterkünfte und buchen Sie Ihren nächsten Aufenthalt!"
   },
+  "availability": {
+    "title": "Verfügbarkeitskalender",
+    "manage": "Verfügbarkeit",
+    "available": "Verfügbar",
+    "booked": "Gebucht",
+    "blocked": "Blockiert",
+    "daysSelected": "Tage ausgewählt",
+    "markAvailable": "Als verfügbar markieren",
+    "markBlocked": "Blockieren",
+    "clearSelection": "Auswahl löschen",
+    "customPrice": "Preis anpassen",
+    "customPricePlaceholder": "z.B. 150",
+    "applyPrice": "Preis anwenden",
+    "updated": "Verfügbarkeit aktualisiert",
+    "priceUpdated": "Preise aktualisiert"
+  },
   "common": {
     "loading": "Wird geladen...",
     "save": "Speichern",

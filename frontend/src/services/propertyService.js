@@ -61,14 +61,10 @@ const propertyService = {
   },
 
   /**
-   * Update availability for property
+   * Update availability for property (bulk dates)
    */
-  async updateAvailability(propertyId, startDate, endDate, updates) {
-    const response = await api.put(`/properties/${propertyId}/availability`, {
-      start_date: startDate,
-      end_date: endDate,
-      updates
-    });
+  async updateAvailability(propertyId, updates) {
+    const response = await api.put(`/properties/${propertyId}/availability`, updates);
     return response.data;
   },
 
