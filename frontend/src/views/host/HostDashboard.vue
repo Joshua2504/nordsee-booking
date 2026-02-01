@@ -4,17 +4,22 @@
       <h1>{{ $t('nav.host_dashboard') }}</h1>
       <div class="dashboard-grid">
         <div class="card">
-          <h3>My Properties</h3>
-          <p>Manage your property listings</p>
-          <RouterLink to="/host/properties/create" class="btn btn-primary">
-            {{ $t('nav.create_property') }}
-          </RouterLink>
+          <h3>{{ $t('property.myProperties') }}</h3>
+          <p>{{ $t('property.manageListings') }}</p>
+          <div class="card-actions">
+            <RouterLink to="/host/properties" class="btn btn-outline">
+              {{ $t('property.viewAll') }}
+            </RouterLink>
+            <RouterLink to="/host/properties/create" class="btn btn-primary">
+              {{ $t('nav.create_property') }}
+            </RouterLink>
+          </div>
         </div>
         <div class="card">
-          <h3>Bookings</h3>
-          <p>View and manage bookings</p>
+          <h3>{{ $t('booking.title') }}</h3>
+          <p>{{ $t('booking.manageBookings') }}</p>
           <RouterLink to="/host/bookings" class="btn btn-outline">
-            View Bookings
+            {{ $t('booking.viewBookings') }}
           </RouterLink>
         </div>
       </div>
@@ -50,4 +55,9 @@
   color: var(--text-light);
   margin-bottom: 24px;
 }
-</style>
+.card-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}</style>

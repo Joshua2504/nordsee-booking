@@ -70,7 +70,19 @@
     "beds": "Betten",
     "bathrooms": "Badezimmer",
     "createNew": "Neue Unterkunft erstellen",
-    "createDescription": "Füllen Sie die Details Ihrer Unterkunft aus"
+    "createDescription": "Füllen Sie die Details Ihrer Unterkunft aus",
+    "myProperties": "Meine Unterkünfte",
+    "manageListings": "Verwalten Sie Ihre Inserate",
+    "viewAll": "Alle anzeigen",
+    "noProperties": "Noch keine Unterkünfte",
+    "noPropertiesDescription": "Erstellen Sie Ihre erste Unterkunft, um loszulegen",
+    "createFirst": "Erste Unterkunft erstellen",
+    "noImage": "Kein Bild",
+    "night": "Nacht",
+    "publish": "Veröffentlichen",
+    "unpublish": "Unveröffentlichen",
+    "deleteConfirmTitle": "Unterkunft löschen?",
+    "deleteConfirmMessage": "Möchten Sie \"{title}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "propertyForm": {
     "basicInfo": "Grundinformationen",
@@ -133,7 +145,7 @@
     "sea_view": "Meerblick"
   },
   "booking": {
-    "title": "Buchung",
+    "title": "Buchungen",
     "check_in": "Anreise",
     "check_out": "Abreise",
     "nights": "Nächte",
@@ -146,7 +158,9 @@
     "rejected": "Abgelehnt",
     "cancel_booking": "Buchung stornieren",
     "approve": "Genehmigen",
-    "reject": "Ablehnen"
+    "reject": "Ablehnen",
+    "manageBookings": "Buchungen verwalten",
+    "viewBookings": "Buchungen anzeigen"
   },
   "common": {
     "loading": "Wird geladen...",

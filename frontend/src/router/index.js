@@ -41,6 +41,12 @@ const routes = [
     meta: { requiresAuth: true, role: 'host' }
   },
   {
+    path: '/host/properties',
+    name: 'my-properties',
+    component: () => import('@/views/host/MyProperties.vue'),
+    meta: { requiresAuth: true, role: 'host' }
+  },
+  {
     path: '/host/properties/create',
     name: 'create-property',
     component: () => import('@/views/host/CreateProperty.vue'),
